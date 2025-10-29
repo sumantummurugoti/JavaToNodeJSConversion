@@ -1,0 +1,1900 @@
+{
+  "projectOverview": "This Java project, named SakilaProject, appears to be a REST API for managing data related to a film rental database (likely Sakila). It utilizes a layered architecture with controllers handling requests, services providing business logic, DAOs interacting with the database, and models representing data entities like actors, categories, and customers.",
+  "modules": [
+    {
+      "name": "SakilaProjectApplication",
+      "type": "Application",
+      "description": "This class is the main entry point for the Spring Boot application, responsible for bootstrapping and running the application.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\SakilaProjectApplication.java",
+      "methods": [
+        {
+          "name": "main",
+          "signature": "public static void main(String[] args)",
+          "description": "This is the main method that starts the Spring Boot application using SpringApplication.run().",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "ActorController",
+      "type": "Controller",
+      "description": "Controller for handling actor-related requests, such as retrieving actor lists and details.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\controller\\ActorController.java",
+      "methods": [
+        {
+          "name": "getActors",
+          "signature": "public String getActors(ModelMap modelMap, @RequestParam(value = \"firstName\", defaultValue = \"ALL ACTORS\") String firstNameFilter, @RequestParam(value = \"lastName\", defaultValue = \"ALL ACTORS\") String lastNameFilter)",
+          "description": "Retrieves a list of actors based on optional first name and last name filters. If no filters are provided, it retrieves all actors. Adds the list of actors and all actors to the model.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getActorFilmDetails",
+          "signature": "public String getActorFilmDetails(ModelMap modelMap, @RequestParam(value = \"id\") Integer id)",
+          "description": "Retrieves the film details for a specific actor based on their ID. Adds the actor's full name and the list of films they starred in to the model.",
+          "complexity": "Low"
+        },
+        {
+          "name": "findActorById",
+          "signature": "public Actor findActorById(Integer id)",
+          "description": "Retrieves an actor by their ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActorFullNameFromID",
+          "signature": "public String getActorFullNameFromID(Integer id)",
+          "description": "Retrieves the full name of an actor based on their ID.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Actor",
+        "com.sparta.engineering72.sakilaproject.services.ActorService",
+        "com.sparta.engineering72.sakilaproject.services.FilmService"
+      ]
+    },
+    {
+      "name": "CategoryController",
+      "type": "Controller",
+      "description": "Controller for handling category-related requests, such as displaying all categories and category details.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\controller\\CategoryController.java",
+      "methods": [
+        {
+          "name": "getCategories",
+          "signature": "public String getCategories(ModelMap modelMap)",
+          "description": "Retrieves all categories and adds them to the model for rendering in the 'categories' view.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCategoryDetails",
+          "signature": "public String getCategoryDetails(ModelMap modelMap, @RequestParam(value = \"id\") Integer id)",
+          "description": "Retrieves category details and films associated with a specific category ID, adding them to the model for rendering in the 'categoryDetails' view.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getCategoryById",
+          "signature": "public Category getCategoryById(Integer id)",
+          "description": "Retrieves a category by its ID.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Category"
+      ]
+    },
+    {
+      "name": "CustomerController",
+      "type": "Controller",
+      "description": "Controller for handling customer-related requests, including displaying customer information and rental history.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\controller\\CustomerController.java",
+      "methods": [
+        {
+          "name": "currentUser",
+          "signature": "public String currentUser(ModelMap modelMap, HttpServletRequest request)",
+          "description": "Retrieves the current user's information and rental history based on their email, and displays it on the customer page.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getCustomers",
+          "signature": "public String getCustomers(ModelMap modelMap, @RequestParam(value = \"firstName\", defaultValue = \"ALL CUSTOMERS\") String firstNameFilter, @RequestParam(value = \"lastName\", defaultValue = \"ALL CUSTOMERS\") String lastNameFilter)",
+          "description": "Retrieves a list of customers based on optional first name and last name filters, and displays them on the owner's customer management page.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "showUsersRentalHistory",
+          "signature": "public String showUsersRentalHistory(ModelMap modelMap, @PathVariable(name = \"id\") int id)",
+          "description": "Retrieves a specific customer's rental history based on their ID and displays it on the owner's customer details page.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Film",
+        "com.sparta.engineering72.sakilaproject.services.RentalService",
+        "com.sparta.engineering72.sakilaproject.services.FilmService",
+        "com.sparta.engineering72.sakilaproject.services.CustomerService",
+        "com.sparta.engineering72.sakilaproject.services.InventoryService",
+        "com.sparta.engineering72.sakilaproject.entities.Customer"
+      ]
+    },
+    {
+      "name": "FilmController",
+      "type": "Controller",
+      "description": "This controller handles requests related to films, including displaying film lists, film details, renting films, and managing films (for owners).",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\controller\\FilmController.java",
+      "methods": [
+        {
+          "name": "getFilms",
+          "signature": "public String getFilms(ModelMap modelMap, @RequestParam(value = \"title\", defaultValue = \"ALL FILMS\") String filter)",
+          "description": "Retrieves a list of films based on the provided filter (title). If no filter is provided, it retrieves all films. Adds the films, available films, and all films to the model.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getFilmDetails",
+          "signature": "public String getFilmDetails(ModelMap modelMap, @RequestParam(value = \"id\") Integer id)",
+          "description": "Retrieves the details of a specific film based on its ID. Adds the film details and availability status to the model.",
+          "complexity": "Low"
+        },
+        {
+          "name": "rentFilm",
+          "signature": "public String rentFilm(ModelMap modelMap, Principal principal, @PathVariable(\"filmid\") int filmid)",
+          "description": "Handles the renting of a film by a customer. It retrieves the customer's information using the principal, finds an available inventory item for the film, creates a rental record, and redirects to the films page.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getFilmDetails",
+          "signature": "public String getFilmDetails(ModelMap modelMap, @RequestParam(value = \"title\", defaultValue = \"ALL FILMS\") String filter)",
+          "description": "Retrieves a list of films based on the provided filter (title) for owner management. If no filter is provided, it retrieves all films. Adds the films and film count to the model.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "showEditProductPage",
+          "signature": "public ModelAndView showEditProductPage(@PathVariable(name = \"id\") int id)",
+          "description": "Displays the edit film page for a specific film, retrieving the film by its ID and adding it to the model.",
+          "complexity": "Low"
+        },
+        {
+          "name": "deleteProduct",
+          "signature": "public String deleteProduct(@PathVariable(name = \"id\") int id)",
+          "description": "Deletes a film based on its ID and redirects to the manage films page.",
+          "complexity": "Low"
+        },
+        {
+          "name": "findFilmByID",
+          "signature": "public Film findFilmByID(Integer id)",
+          "description": "Retrieves a film by its ID.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Film",
+        "com.sparta.engineering72.sakilaproject.services.RentalService",
+        "com.sparta.engineering72.sakilaproject.services.FilmService",
+        "com.sparta.engineering72.sakilaproject.entities.Rental",
+        "com.sparta.engineering72.sakilaproject.services.CustomerService",
+        "com.sparta.engineering72.sakilaproject.entities.Inventory",
+        "com.sparta.engineering72.sakilaproject.services.InventoryService",
+        "com.sparta.engineering72.sakilaproject.entities.Customer"
+      ]
+    },
+    {
+      "name": "MainController",
+      "type": "Controller",
+      "description": "Controller for handling main routes like home, login, and account.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\controller\\MainController.java",
+      "methods": [
+        {
+          "name": "home",
+          "signature": "public String home()",
+          "description": "Returns the 'home' view.",
+          "complexity": "Low"
+        },
+        {
+          "name": "login",
+          "signature": "public String login()",
+          "description": "Returns the 'login' view.",
+          "complexity": "Low"
+        },
+        {
+          "name": "account",
+          "signature": "public String account()",
+          "description": "Returns the 'account' view.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "StaffController",
+      "type": "Controller",
+      "description": "Controller for handling staff-related requests, specifically for owner-level access. It retrieves staff details, customer count, and inventory count to populate the owner dashboard.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\controller\\StaffController.java",
+      "methods": [
+        {
+          "name": "currentUser",
+          "signature": "public String currentUser(ModelMap modelMap, HttpServletRequest request)",
+          "description": "Retrieves the currently logged-in staff member's information, the total number of customers, and the total number of inventory items.  It then adds these values to the model and returns the view for the owner dashboard.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.services.StaffService",
+        "com.sparta.engineering72.sakilaproject.entities.Staff",
+        "com.sparta.engineering72.sakilaproject.services.InventoryService",
+        "com.sparta.engineering72.sakilaproject.services.CustomerService"
+      ]
+    },
+    {
+      "name": "Actor",
+      "type": "Model",
+      "description": "Represents an Actor entity with properties like actorId, firstName, lastName, and lastUpdate. It includes getter and setter methods for each property, as well as equals and hashCode methods for object comparison.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\Actor.java",
+      "methods": [
+        {
+          "name": "getActorId",
+          "signature": "public int getActorId()",
+          "description": "Returns the actor's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setActorId",
+          "signature": "public void setActorId(int actorId)",
+          "description": "Sets the actor's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFirstName",
+          "signature": "public String getFirstName()",
+          "description": "Returns the actor's first name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFirstName",
+          "signature": "public void setFirstName(String firstName)",
+          "description": "Sets the actor's first name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastName",
+          "signature": "public String getLastName()",
+          "description": "Returns the actor's last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastName",
+          "signature": "public void setLastName(String lastName)",
+          "description": "Sets the actor's last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Returns the timestamp of the last update.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the timestamp of the last update.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Compares this Actor object to another object for equality based on actorId, firstName, lastName, and lastUpdate.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the Actor object based on actorId, firstName, lastName, and lastUpdate.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "Category",
+      "type": "Model",
+      "description": "Represents a category entity with properties like categoryId, name, and lastUpdate. It includes getter and setter methods for each property, as well as implementations for equals and hashCode methods.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\Category.java",
+      "methods": [
+        {
+          "name": "getCategoryId",
+          "signature": "public int getCategoryId()",
+          "description": "Returns the category ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setCategoryId",
+          "signature": "public void setCategoryId(int categoryId)",
+          "description": "Sets the category ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getName",
+          "signature": "public String getName()",
+          "description": "Returns the category name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setName",
+          "signature": "public void setName(String name)",
+          "description": "Sets the category name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Returns the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two Category objects are equal based on their properties.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the Category object based on its properties.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "Customer",
+      "type": "Model",
+      "description": "Represents a Customer entity with properties like customerId, firstName, lastName, email, active status, creation date, and last update timestamp.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\Customer.java",
+      "methods": [
+        {
+          "name": "getCustomerId",
+          "signature": "public int getCustomerId()",
+          "description": "Retrieves the customer's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setCustomerId",
+          "signature": "public void setCustomerId(int customerId)",
+          "description": "Sets the customer's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFirstName",
+          "signature": "public String getFirstName()",
+          "description": "Retrieves the customer's first name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFirstName",
+          "signature": "public void setFirstName(String firstName)",
+          "description": "Sets the customer's first name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastName",
+          "signature": "public String getLastName()",
+          "description": "Retrieves the customer's last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastName",
+          "signature": "public void setLastName(String lastName)",
+          "description": "Sets the customer's last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getEmail",
+          "signature": "public String getEmail()",
+          "description": "Retrieves the customer's email address.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setEmail",
+          "signature": "public void setEmail(String email)",
+          "description": "Sets the customer's email address.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActive",
+          "signature": "public byte getActive()",
+          "description": "Retrieves the customer's active status.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setActive",
+          "signature": "public void setActive(byte active)",
+          "description": "Sets the customer's active status.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCreateDate",
+          "signature": "public Timestamp getCreateDate()",
+          "description": "Retrieves the customer's creation date.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setCreateDate",
+          "signature": "public void setCreateDate(Timestamp createDate)",
+          "description": "Sets the customer's creation date.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Retrieves the customer's last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the customer's last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two Customer objects are equal based on their properties.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the Customer object based on its properties.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "Film",
+      "type": "Model",
+      "description": "Represents a Film entity with properties like title, description, release year, rental details, and other film-related attributes. It includes getter and setter methods for each property, as well as equals and hashCode methods for object comparison.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\Film.java",
+      "methods": [
+        {
+          "name": "getFilmId",
+          "signature": "public int getFilmId()",
+          "description": "Retrieves the film's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFilmId",
+          "signature": "public void setFilmId(int filmId)",
+          "description": "Sets the film's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getTitle",
+          "signature": "public String getTitle()",
+          "description": "Retrieves the film's title.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setTitle",
+          "signature": "public void setTitle(String title)",
+          "description": "Sets the film's title.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getDescription",
+          "signature": "public String getDescription()",
+          "description": "Retrieves the film's description.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setDescription",
+          "signature": "public void setDescription(String description)",
+          "description": "Sets the film's description.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getReleaseYear",
+          "signature": "public int getReleaseYear()",
+          "description": "Retrieves the film's release year.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setReleaseYear",
+          "signature": "public void setReleaseYear(int releaseYear)",
+          "description": "Sets the film's release year.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getRentalDuration",
+          "signature": "public Integer getRentalDuration()",
+          "description": "Retrieves the film's rental duration.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setRentalDuration",
+          "signature": "public void setRentalDuration(Integer rentalDuration)",
+          "description": "Sets the film's rental duration.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getRentalRate",
+          "signature": "public BigDecimal getRentalRate()",
+          "description": "Retrieves the film's rental rate.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setRentalRate",
+          "signature": "public void setRentalRate(BigDecimal rentalRate)",
+          "description": "Sets the film's rental rate.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLength",
+          "signature": "public Integer getLength()",
+          "description": "Retrieves the film's length.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLength",
+          "signature": "public void setLength(Integer length)",
+          "description": "Sets the film's length.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getReplacementCost",
+          "signature": "public BigDecimal getReplacementCost()",
+          "description": "Retrieves the film's replacement cost.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setReplacementCost",
+          "signature": "public void setReplacementCost(BigDecimal replacementCost)",
+          "description": "Sets the film's replacement cost.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getRating",
+          "signature": "public String getRating()",
+          "description": "Retrieves the film's rating.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setRating",
+          "signature": "public void setRating(String rating)",
+          "description": "Sets the film's rating.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getSpecialFeatures",
+          "signature": "public String getSpecialFeatures()",
+          "description": "Retrieves the film's special features.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setSpecialFeatures",
+          "signature": "public void setSpecialFeatures(String specialFeatures)",
+          "description": "Sets the film's special features.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Retrieves the timestamp of the last update.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the timestamp of the last update.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two Film objects are equal based on their properties.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the Film object based on its properties.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "FilmActor",
+      "type": "Model",
+      "description": "Represents the relationship between films and actors, linking actors to the films they have appeared in. It also tracks the last update timestamp.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\FilmActor.java",
+      "methods": [
+        {
+          "name": "getActorId",
+          "signature": "public int getActorId()",
+          "description": "Retrieves the actor's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setActorId",
+          "signature": "public void setActorId(int actorId)",
+          "description": "Sets the actor's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilmId",
+          "signature": "public int getFilmId()",
+          "description": "Retrieves the film's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFilmId",
+          "signature": "public void setFilmId(int filmId)",
+          "description": "Sets the film's ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Retrieves the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two FilmActor objects are equal based on actorId, filmId, and lastUpdate.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the FilmActor object based on actorId, filmId, and lastUpdate.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "FilmActorPK",
+      "type": "Utility",
+      "description": "Represents the composite primary key for the FilmActor entity, combining actorId and filmId.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\FilmActorPK.java",
+      "methods": [
+        {
+          "name": "getActorId",
+          "signature": "public Integer getActorId()",
+          "description": "Retrieves the actorId component of the primary key.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setActorId",
+          "signature": "public void setActorId(int actorId)",
+          "description": "Sets the actorId component of the primary key.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilmId",
+          "signature": "public int getFilmId()",
+          "description": "Retrieves the filmId component of the primary key.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFilmId",
+          "signature": "public void setFilmId(int filmId)",
+          "description": "Sets the filmId component of the primary key.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Determines whether two FilmActorPK objects are equal based on their actorId and filmId.",
+          "complexity": "Low"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the FilmActorPK object based on its actorId and filmId.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "FilmCategory",
+      "type": "Model",
+      "description": "Represents the relationship between films and categories, linking a film to a category and storing the last update timestamp.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\FilmCategory.java",
+      "methods": [
+        {
+          "name": "getFilmId",
+          "signature": "public int getFilmId()",
+          "description": "Retrieves the film ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFilmId",
+          "signature": "public void setFilmId(Integer filmId)",
+          "description": "Sets the film ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCategoryId",
+          "signature": "public int getCategoryId()",
+          "description": "Retrieves the category ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setCategoryId",
+          "signature": "public void setCategoryId(Integer categoryId)",
+          "description": "Sets the category ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Retrieves the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Compares this FilmCategory object to another object for equality based on filmId, categoryId, and lastUpdate.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Calculates the hash code for this FilmCategory object based on filmId, categoryId, and lastUpdate.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "FilmCategoryPK",
+      "type": "Utility",
+      "description": "Represents the composite primary key for the FilmCategory entity, consisting of filmId and categoryId.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\FilmCategoryPK.java",
+      "methods": [
+        {
+          "name": "getFilmId",
+          "signature": "public int getFilmId()",
+          "description": "Returns the filmId part of the composite key.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFilmId",
+          "signature": "public void setFilmId(int filmId)",
+          "description": "Sets the filmId part of the composite key.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCategoryId",
+          "signature": "public int getCategoryId()",
+          "description": "Returns the categoryId part of the composite key.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setCategoryId",
+          "signature": "public void setCategoryId(int categoryId)",
+          "description": "Sets the categoryId part of the composite key.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two FilmCategoryPK objects are equal based on their filmId and categoryId.",
+          "complexity": "Low"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the FilmCategoryPK object based on its filmId and categoryId.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "FilmText",
+      "type": "Model",
+      "description": "Represents film text data, likely mapping to a database table. Contains film ID, title, and description.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\FilmText.java",
+      "methods": [
+        {
+          "name": "getFilmId",
+          "signature": "public int getFilmId()",
+          "description": "Retrieves the film ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFilmId",
+          "signature": "public void setFilmId(int filmId)",
+          "description": "Sets the film ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getTitle",
+          "signature": "public String getTitle()",
+          "description": "Retrieves the film title.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setTitle",
+          "signature": "public void setTitle(String title)",
+          "description": "Sets the film title.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getDescription",
+          "signature": "public String getDescription()",
+          "description": "Retrieves the film description.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setDescription",
+          "signature": "public void setDescription(String description)",
+          "description": "Sets the film description.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two FilmText objects are equal based on filmId, title, and description.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the FilmText object based on filmId, title, and description.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "Inventory",
+      "type": "Model",
+      "description": "Represents an inventory item, linking a film to its availability in the inventory.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\Inventory.java",
+      "methods": [
+        {
+          "name": "getInventoryId",
+          "signature": "public int getInventoryId()",
+          "description": "Retrieves the inventory ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setInventoryId",
+          "signature": "public void setInventoryId(int inventoryId)",
+          "description": "Sets the inventory ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilmId",
+          "signature": "public int getFilmId()",
+          "description": "Retrieves the film ID associated with the inventory item.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFilmId",
+          "signature": "public void setFilmId(int filmId)",
+          "description": "Sets the film ID associated with the inventory item.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Retrieves the timestamp of the last update to the inventory item.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the timestamp of the last update to the inventory item.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two Inventory objects are equal based on inventoryId and lastUpdate.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the Inventory object based on inventoryId and lastUpdate.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "Order",
+      "type": "Utility",
+      "description": "Represents an order, associating a customer, film, and rental.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\Order.java",
+      "methods": [
+        {
+          "name": "Order",
+          "signature": "public Order(Customer customer, Film film, Rental rental)",
+          "description": "Constructor to create an Order object.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomer",
+          "signature": "public Customer getCustomer()",
+          "description": "Returns the customer associated with the order.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setCustomer",
+          "signature": "public void setCustomer(Customer customer)",
+          "description": "Sets the customer associated with the order.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilm",
+          "signature": "public Film getFilm()",
+          "description": "Returns the film associated with the order.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFilm",
+          "signature": "public void setFilm(Film film)",
+          "description": "Sets the film associated with the order.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getRental",
+          "signature": "public Rental getRental()",
+          "description": "Returns the rental associated with the order.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setRental",
+          "signature": "public void setRental(Rental rental)",
+          "description": "Sets the rental associated with the order.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "Rental",
+      "type": "Model",
+      "description": "Represents a rental record with details like rental date, inventory, customer, and return information.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\Rental.java",
+      "methods": [
+        {
+          "name": "getRentalId",
+          "signature": "public int getRentalId()",
+          "description": "Retrieves the rental ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setRentalId",
+          "signature": "public void setRentalId(int rentalId)",
+          "description": "Sets the rental ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getRentalDate",
+          "signature": "public Timestamp getRentalDate()",
+          "description": "Retrieves the rental date.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setRentalDate",
+          "signature": "public void setRentalDate(Timestamp rentalDate)",
+          "description": "Sets the rental date.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getInventoryId",
+          "signature": "public int getInventoryId()",
+          "description": "Retrieves the inventory ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setInventoryId",
+          "signature": "public void setInventoryId(int inventoryId)",
+          "description": "Sets the inventory ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomerId",
+          "signature": "public int getCustomerId()",
+          "description": "Retrieves the customer ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setCustomerId",
+          "signature": "public void setCustomerId(int customerId)",
+          "description": "Sets the customer ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getReturnDate",
+          "signature": "public Timestamp getReturnDate()",
+          "description": "Retrieves the return date.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setReturnDate",
+          "signature": "public void setReturnDate(Timestamp returnDate)",
+          "description": "Sets the return date.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getStaffId",
+          "signature": "public int getStaffId()",
+          "description": "Retrieves the staff ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setStaffId",
+          "signature": "public void setStaffId(int staffId)",
+          "description": "Sets the staff ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Retrieves the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two Rental objects are equal based on their attributes.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the Rental object.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "Staff",
+      "type": "Model",
+      "description": "Represents a Staff entity with properties like staffId, firstName, lastName, picture, email, active status, username, password, and lastUpdate timestamp. It includes getter and setter methods for each property, as well as equals and hashCode methods for object comparison.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\entities\\Staff.java",
+      "methods": [
+        {
+          "name": "getStaffId",
+          "signature": "public int getStaffId()",
+          "description": "Retrieves the staff ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setStaffId",
+          "signature": "public void setStaffId(int staffId)",
+          "description": "Sets the staff ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFirstName",
+          "signature": "public String getFirstName()",
+          "description": "Retrieves the first name of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setFirstName",
+          "signature": "public void setFirstName(String firstName)",
+          "description": "Sets the first name of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastName",
+          "signature": "public String getLastName()",
+          "description": "Retrieves the last name of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastName",
+          "signature": "public void setLastName(String lastName)",
+          "description": "Sets the last name of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getPicture",
+          "signature": "public byte[] getPicture()",
+          "description": "Retrieves the picture of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setPicture",
+          "signature": "public void setPicture(byte[] picture)",
+          "description": "Sets the picture of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getEmail",
+          "signature": "public String getEmail()",
+          "description": "Retrieves the email address of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setEmail",
+          "signature": "public void setEmail(String email)",
+          "description": "Sets the email address of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActive",
+          "signature": "public byte getActive()",
+          "description": "Retrieves the active status of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setActive",
+          "signature": "public void setActive(byte active)",
+          "description": "Sets the active status of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getUsername",
+          "signature": "public String getUsername()",
+          "description": "Retrieves the username of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setUsername",
+          "signature": "public void setUsername(String username)",
+          "description": "Sets the username of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getPassword",
+          "signature": "public String getPassword()",
+          "description": "Retrieves the password of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setPassword",
+          "signature": "public void setPassword(String password)",
+          "description": "Sets the password of the staff member.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getLastUpdate",
+          "signature": "public Timestamp getLastUpdate()",
+          "description": "Retrieves the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "setLastUpdate",
+          "signature": "public void setLastUpdate(Timestamp lastUpdate)",
+          "description": "Sets the last update timestamp.",
+          "complexity": "Low"
+        },
+        {
+          "name": "equals",
+          "signature": "public boolean equals(Object o)",
+          "description": "Checks if two Staff objects are equal based on their properties.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "hashCode",
+          "signature": "public int hashCode()",
+          "description": "Generates a hash code for the Staff object based on its properties.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "ActorRepository",
+      "type": "DAO",
+      "description": "DAO (Data Access Object) interface for managing Actor entities in the database. Extends JpaRepository for basic CRUD operations and defines custom query methods.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\respositories\\ActorRepository.java",
+      "methods": [
+        {
+          "name": "findActorsByFirstNameAndLastName",
+          "signature": "public List<Actor> findActorsByFirstNameAndLastName(String firstName, String lastName)",
+          "description": "Finds a list of actors by their first name and last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "findActorsByFirstName",
+          "signature": "public List<Actor> findActorsByFirstName(String firstName)",
+          "description": "Finds a list of actors by their first name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "findActorsByLastName",
+          "signature": "public List<Actor> findActorsByLastName(String lastName)",
+          "description": "Finds a list of actors by their last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActorByActorId",
+          "signature": "public Actor getActorByActorId(Integer id)",
+          "description": "Retrieves an actor by their ID.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Actor",
+        "com.sparta.engineering72.sakilaproject.entities.Film"
+      ]
+    },
+    {
+      "name": "CategoryRepository",
+      "type": "DAO",
+      "description": "This interface defines the Data Access Object (DAO) for the Category entity, extending Spring Data JPA's JpaRepository for basic CRUD operations and adding a custom method to retrieve a Category by its ID.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\respositories\\CategoryRepository.java",
+      "methods": [
+        {
+          "name": "getCategoryByCategoryId",
+          "signature": "public Category getCategoryByCategoryId(Integer id)",
+          "description": "Retrieves a Category entity from the database based on its category ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "findAll",
+          "signature": "public List<Category> findAll()",
+          "description": "Retrieves all Category entities from the database.",
+          "complexity": "Low"
+        },
+        {
+          "name": "findById",
+          "signature": "public Optional<Category> findById(Integer id)",
+          "description": "Retrieves a Category entity from the database based on its ID, wrapped in an Optional.",
+          "complexity": "Low"
+        },
+        {
+          "name": "save",
+          "signature": "public <S extends Category> S save(S entity)",
+          "description": "Saves a Category entity to the database.",
+          "complexity": "Low"
+        },
+        {
+          "name": "delete",
+          "signature": "public void delete(Category entity)",
+          "description": "Deletes a Category entity from the database.",
+          "complexity": "Low"
+        },
+        {
+          "name": "deleteById",
+          "signature": "public void deleteById(Integer id)",
+          "description": "Deletes a Category entity from the database based on its ID.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Category"
+      ]
+    },
+    {
+      "name": "CustomerRepository",
+      "type": "DAO",
+      "description": "This interface defines the data access operations for the Customer entity, extending Spring Data JPA's JpaRepository for basic CRUD operations and providing custom query methods.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\respositories\\CustomerRepository.java",
+      "methods": [
+        {
+          "name": "getCustomerByCredentials",
+          "signature": "public Customer getCustomerByCredentials(String username, Integer password)",
+          "description": "Retrieves a customer based on their email (username) and customer ID (password).",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getCustomerByUsername",
+          "signature": "public Customer getCustomerByUsername(String username)",
+          "description": "Retrieves a customer based on their email (username).",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomersByFirstName",
+          "signature": "public List<Customer> getCustomersByFirstName(String firstName)",
+          "description": "Retrieves a list of customers based on their first name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomersByLastName",
+          "signature": "public List<Customer> getCustomersByLastName(String lastName)",
+          "description": "Retrieves a list of customers based on their last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomersByFullName",
+          "signature": "public List<Customer> getCustomersByFullName(String firstName, String lastName)",
+          "description": "Retrieves a list of customers based on their first and last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomerByCustomerId",
+          "signature": "public Customer getCustomerByCustomerId(Integer id)",
+          "description": "Retrieves a customer based on their customer ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomerByEmail",
+          "signature": "public Customer getCustomerByEmail(String email)",
+          "description": "Retrieves a customer based on their email.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomerCount",
+          "signature": "public Integer getCustomerCount()",
+          "description": "Retrieves the total number of customers.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Customer"
+      ]
+    },
+    {
+      "name": "FilmRepository",
+      "type": "DAO",
+      "description": "Repository interface for managing Film entities in the database. Extends JpaRepository for basic CRUD operations and defines custom queries for specific film retrieval scenarios.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\respositories\\FilmRepository.java",
+      "methods": [
+        {
+          "name": "getAvailableFilmCount",
+          "signature": "public Integer getAvailableFilmCount(Integer id)",
+          "description": "Retrieves the count of available copies of a film with the given ID.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getAvailableFilms",
+          "signature": "public List<Film> getAvailableFilms()",
+          "description": "Retrieves a list of all available films.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getAllFilmsByCategory",
+          "signature": "public List<Film> getAllFilmsByCategory(Integer categoryId)",
+          "description": "Retrieves a list of all films belonging to a specific category.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "getAllFilmsByActor",
+          "signature": "public List<Film> getAllFilmsByActor(Integer actorId)",
+          "description": "Retrieves a list of all films in which a specific actor has appeared.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "findByTitle",
+          "signature": "public List<Film> findByTitle(String title)",
+          "description": "Retrieves a list of films with the given title.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilmByFilmId",
+          "signature": "public Film getFilmByFilmId(Integer id)",
+          "description": "Retrieves a film with the given film ID.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Actor",
+        "com.sparta.engineering72.sakilaproject.entities.Film",
+        "com.sparta.engineering72.sakilaproject.entities.FilmActor",
+        "com.sparta.engineering72.sakilaproject.entities.Customer"
+      ]
+    },
+    {
+      "name": "InventoryRepository",
+      "type": "DAO",
+      "description": "This interface defines the Data Access Object (DAO) for the Inventory entity, extending JpaRepository to provide basic CRUD operations and custom queries for interacting with the inventory table in the database.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\respositories\\InventoryRepository.java",
+      "methods": [
+        {
+          "name": "getInventoriesByInventoryId",
+          "signature": "public Inventory getInventoriesByInventoryId(Integer inventoryId)",
+          "description": "Retrieves an Inventory object by joining the inventory and rental tables based on the inventory ID.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "deleteInventoryByInventoryId",
+          "signature": "public void deleteInventoryByInventoryId(Integer id)",
+          "description": "Deletes inventory records based on the film ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getInventoryCount",
+          "signature": "public Integer getInventoryCount()",
+          "description": "Retrieves the total count of inventory items.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Inventory",
+        "com.sparta.engineering72.sakilaproject.entities.Rental"
+      ]
+    },
+    {
+      "name": "RentalRepository",
+      "type": "DAO",
+      "description": "This interface defines the Data Access Object (DAO) for the Rental entity, extending Spring Data JPA's JpaRepository to provide basic CRUD operations and custom queries for interacting with the rental table in the database.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\respositories\\RentalRepository.java",
+      "methods": [
+        {
+          "name": "getRentalByRentalId",
+          "signature": "public Rental getRentalByRentalId(Integer id)",
+          "description": "Retrieves a Rental entity from the database based on its rental ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getRentalByCustomerId",
+          "signature": "public List<Rental> getRentalByCustomerId(Integer customerId)",
+          "description": "Retrieves a list of Rental entities associated with a specific customer ID using a native SQL query.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Rental"
+      ]
+    },
+    {
+      "name": "StaffRepository",
+      "type": "DAO",
+      "description": "Repository interface for accessing and managing Staff entities in the database.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\respositories\\StaffRepository.java",
+      "methods": [
+        {
+          "name": "getStaffByUsername",
+          "signature": "public Staff getStaffByUsername(String username)",
+          "description": "Retrieves a Staff entity from the database based on the provided username.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Film",
+        "com.sparta.engineering72.sakilaproject.entities.Staff",
+        "com.sparta.engineering72.sakilaproject.entities.Customer"
+      ]
+    },
+    {
+      "name": "FailureHandler",
+      "type": "Utility",
+      "description": "Handles access denied exceptions by redirecting the user to an error page.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\securingweb\\FailureHandler.java",
+      "methods": [
+        {
+          "name": "handle",
+          "signature": "public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)",
+          "description": "Redirects the user to the /error page when an AccessDeniedException occurs.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "MvcConfig",
+      "type": "Configuration",
+      "description": "Configures Spring MVC to map simple URL paths to view names without requiring full controller logic.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\securingweb\\MvcConfig.java",
+      "methods": [
+        {
+          "name": "addViewControllers",
+          "signature": "public void addViewControllers(ViewControllerRegistry registry)",
+          "description": "Registers view controllers to map URL paths to specific view names.  Specifically maps '/home', '/', and '/login' to their respective view names.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "SuccessHandler",
+      "type": "Utility",
+      "description": "Handles successful authentication by redirecting users based on their roles.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\securingweb\\SuccessHandler.java",
+      "methods": [
+        {
+          "name": "onAuthenticationSuccess",
+          "signature": "public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)",
+          "description": "Redirects the user to a specific page based on their granted authorities (roles). If the user has ROLE_USER, they are redirected to /customer. If they have ROLE_ADMIN, they are redirected to /owner. Throws an IllegalStateException if the user has an unrecognized role.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "UserDetailsServiceImpl",
+      "type": "Service",
+      "description": "This service class implements the UserDetailsService interface to load user details from the database for authentication.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\securingweb\\UserDetailsServiceImpl.java",
+      "methods": [
+        {
+          "name": "loadUserByUsername",
+          "signature": "public UserDetails loadUserByUsername(String anyUsername)",
+          "description": "Loads user details by username (email for customers, username for staff).  It retrieves customer and staff information from their respective repositories. If a user is found (either customer or staff), it builds a UserDetails object with appropriate roles and encoded password. If no user is found, it throws a UsernameNotFoundException.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.respositories.StaffRepository",
+        "com.sparta.engineering72.sakilaproject.entities.Staff",
+        "com.sparta.engineering72.sakilaproject.entities.Customer",
+        "com.sparta.engineering72.sakilaproject.respositories.CustomerRepository"
+      ]
+    },
+    {
+      "name": "WebSecurityConfig",
+      "type": "Configuration",
+      "description": "Configures web security for the application, defining authentication and authorization rules.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\securingweb\\WebSecurityConfig.java",
+      "methods": [
+        {
+          "name": "configure",
+          "signature": "protected void configure(HttpSecurity http) throws Exception",
+          "description": "Configures HTTP security settings, including authorization rules, login page, and logout.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "userDetailsService",
+          "signature": "public UserDetailsService userDetailsService()",
+          "description": "Creates and configures a UserDetailsService bean for retrieving user details.",
+          "complexity": "Low"
+        },
+        {
+          "name": "passwordEncoder",
+          "signature": "public PasswordEncoder passwordEncoder()",
+          "description": "Creates and configures a PasswordEncoder bean for encoding passwords.",
+          "complexity": "Low"
+        },
+        {
+          "name": "authenticationProvider",
+          "signature": "public DaoAuthenticationProvider authenticationProvider()",
+          "description": "Creates and configures a DaoAuthenticationProvider bean for authentication.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "configure",
+          "signature": "protected void configure(AuthenticationManagerBuilder auth) throws Exception",
+          "description": "Configures the AuthenticationManagerBuilder to use the defined authentication provider.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.services.StaffService",
+        "com.sparta.engineering72.sakilaproject.services.CustomerService"
+      ]
+    },
+    {
+      "name": "ActorService",
+      "type": "Service",
+      "description": "Service class for managing Actor entities, providing methods to retrieve actor data from the database.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\services\\ActorService.java",
+      "methods": [
+        {
+          "name": "getAllActors",
+          "signature": "public List<Actor> getAllActors()",
+          "description": "Retrieves all actors from the database.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActorByID",
+          "signature": "public Actor getActorByID(int id)",
+          "description": "Retrieves an actor from the database based on their ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActorsByFullName",
+          "signature": "public List<Actor> getActorsByFullName(String firstName, String lastName)",
+          "description": "Retrieves a list of actors from the database based on their first and last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActorsByFirstName",
+          "signature": "public List<Actor> getActorsByFirstName(String firstName)",
+          "description": "Retrieves a list of actors from the database based on their first name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActorsByLastName",
+          "signature": "public List<Actor> getActorsByLastName(String lastName)",
+          "description": "Retrieves a list of actors from the database based on their last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getActorFullNameFromID",
+          "signature": "public String getActorFullNameFromID(Integer id)",
+          "description": "Retrieves the full name of an actor based on their ID.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Actor",
+        "com.sparta.engineering72.sakilaproject.respositories.ActorRepository"
+      ]
+    },
+    {
+      "name": "CategoryService",
+      "type": "Service",
+      "description": "Service class for managing categories, providing methods to retrieve category data.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\services\\CategoryService.java",
+      "methods": [
+        {
+          "name": "getAllCategories",
+          "signature": "public List<Category> getAllCategories()",
+          "description": "Retrieves all categories from the database.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getByCategoryId",
+          "signature": "public Category getByCategoryId(Integer id)",
+          "description": "Retrieves a category by its ID.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Category",
+        "com.sparta.engineering72.sakilaproject.respositories.CategoryRepository"
+      ]
+    },
+    {
+      "name": "CustomerService",
+      "type": "Service",
+      "description": "This service class provides methods to interact with customer data, delegating data access to the CustomerRepository.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\services\\CustomerService.java",
+      "methods": [
+        {
+          "name": "getAllCustomers",
+          "signature": "public List<Customer> getAllCustomers()",
+          "description": "Retrieves all customers from the repository.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomersByFirstName",
+          "signature": "public List<Customer> getCustomersByFirstName(String firstName)",
+          "description": "Retrieves customers by their first name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomersByLastName",
+          "signature": "public List<Customer> getCustomersByLastName(String lastName)",
+          "description": "Retrieves customers by their last name.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomersByFullName",
+          "signature": "public List<Customer> getCustomersByFullName(String firstName, String lastName)",
+          "description": "Retrieves customers by their full name (first and last name).",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomerByID",
+          "signature": "public Customer getCustomerByID(int id)",
+          "description": "Retrieves a customer by their ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomerByEmail",
+          "signature": "public Customer getCustomerByEmail(String email)",
+          "description": "Retrieves a customer by their email address.",
+          "complexity": "Low"
+        },
+        {
+          "name": "save",
+          "signature": "public void save(Customer customer)",
+          "description": "Saves a customer to the repository.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getCustomerCount",
+          "signature": "public Integer getCustomerCount()",
+          "description": "Retrieves the total number of customers.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Customer",
+        "com.sparta.engineering72.sakilaproject.respositories.CustomerRepository"
+      ]
+    },
+    {
+      "name": "FilmService",
+      "type": "Service",
+      "description": "Service class for managing Film entities, providing methods to interact with the FilmRepository.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\services\\FilmService.java",
+      "methods": [
+        {
+          "name": "getAllFilms",
+          "signature": "public List<Film> getAllFilms()",
+          "description": "Retrieves all films from the repository.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilmByID",
+          "signature": "public Film getFilmByID(int id)",
+          "description": "Retrieves a film by its ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilmsByTitle",
+          "signature": "public List<Film> getFilmsByTitle(String title)",
+          "description": "Retrieves films by their title.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getAvailableFilms",
+          "signature": "public List<Film> getAvailableFilms()",
+          "description": "Retrieves all available films.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getAvailableFilmCount",
+          "signature": "public Integer getAvailableFilmCount(Integer id)",
+          "description": "Retrieves the count of available films for a given film ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilmsByCategory",
+          "signature": "public List<Film> getFilmsByCategory(Integer id)",
+          "description": "Retrieves films by category ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getFilmsByActor",
+          "signature": "public List<Film> getFilmsByActor(Integer id)",
+          "description": "Retrieves films by actor ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "save",
+          "signature": "public void save(Film film)",
+          "description": "Saves a film to the repository.",
+          "complexity": "Low"
+        },
+        {
+          "name": "deleteFilmById",
+          "signature": "public void deleteFilmById(int id)",
+          "description": "Deletes a film by its ID.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Film",
+        "com.sparta.engineering72.sakilaproject.respositories.FilmRepository"
+      ]
+    },
+    {
+      "name": "InventoryService",
+      "type": "Service",
+      "description": "Service class for managing inventory operations, interacting with the InventoryRepository.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\services\\InventoryService.java",
+      "methods": [
+        {
+          "name": "getAllInventory",
+          "signature": "public List<Inventory> getAllInventory()",
+          "description": "Retrieves all inventory items from the repository.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getInventoriesById",
+          "signature": "public Inventory getInventoriesById(Integer id)",
+          "description": "Retrieves a specific inventory item by its ID from the repository.",
+          "complexity": "Low"
+        },
+        {
+          "name": "deleteInventoryItemById",
+          "signature": "public void deleteInventoryItemById(Integer id)",
+          "description": "Deletes an inventory item by its ID from the repository. Marked as transactional.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getInventoryCount",
+          "signature": "public Integer getInventoryCount()",
+          "description": "Retrieves the total count of inventory items from the repository.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.entities.Inventory",
+        "com.sparta.engineering72.sakilaproject.respositories.InventoryRepository"
+      ]
+    },
+    {
+      "name": "RentalService",
+      "type": "Service",
+      "description": "Service class for managing rental operations, interacting with the RentalRepository.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\services\\RentalService.java",
+      "methods": [
+        {
+          "name": "getRentalsByCustomer",
+          "signature": "public List<Rental> getRentalsByCustomer(Integer id)",
+          "description": "Retrieves a list of rentals associated with a specific customer ID.",
+          "complexity": "Low"
+        },
+        {
+          "name": "addRental",
+          "signature": "public void addRental(int inventoryId, int customerId, Timestamp returnDate)",
+          "description": "Adds a new rental record to the database, setting rental date, last update, staff ID, and other rental details.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.respositories.RentalRepository",
+        "com.sparta.engineering72.sakilaproject.entities.Rental"
+      ]
+    },
+    {
+      "name": "StaffService",
+      "type": "Service",
+      "description": "Service class for managing staff data, interacting with the StaffRepository.",
+      "file_path": "src\\main\\java\\com\\sparta\\engineering72\\sakilaproject\\services\\StaffService.java",
+      "methods": [
+        {
+          "name": "getAllStaff",
+          "signature": "public List<Staff> getAllStaff()",
+          "description": "Retrieves all staff members from the database.",
+          "complexity": "Low"
+        },
+        {
+          "name": "getStaffByUsername",
+          "signature": "public Staff getStaffByUsername(String username)",
+          "description": "Retrieves a staff member by their username.",
+          "complexity": "Low"
+        }
+      ],
+      "dependencies": [
+        "com.sparta.engineering72.sakilaproject.respositories.StaffRepository",
+        "com.sparta.engineering72.sakilaproject.entities.Staff"
+      ]
+    },
+    {
+      "name": "MavenWrapperDownloader",
+      "type": "Utility",
+      "description": "Downloads the Maven Wrapper JAR file from a specified URL, or a default URL if none is specified in the maven-wrapper.properties file.",
+      "file_path": ".mvn\\wrapper\\MavenWrapperDownloader.java",
+      "methods": [
+        {
+          "name": "main",
+          "signature": "public static void main(String args[])",
+          "description": "The main method that initiates the download process. It reads the base directory from the arguments, checks for a custom download URL in the maven-wrapper.properties file, and downloads the Maven Wrapper JAR file to the specified location.",
+          "complexity": "Medium"
+        },
+        {
+          "name": "downloadFileFromURL",
+          "signature": "private static void downloadFileFromURL(String urlString, File destination) throws Exception",
+          "description": "Downloads a file from a given URL to a specified destination. It handles authentication if MVNW_USERNAME and MVNW_PASSWORD environment variables are set.",
+          "complexity": "Medium"
+        }
+      ],
+      "dependencies": []
+    }
+  ],
+  "statistics": {
+    "totalModules": 40,
+    "byType": {
+      "Controller": 6,
+      "Model": 10,
+      "Service": 8,
+      "Utility": 6,
+      "DAO": 7,
+      "Configuration": 2,
+      "Application": 1
+    }
+  }
+}
