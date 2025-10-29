@@ -1,8 +1,9 @@
 # Java-to-Node.js Analyzer and Converter
 
-**Presentation**: Presentation (ppt) can be found in `Presentation` folder
-**Output**: Json output is saved  as `codebase_analysis.json` file
-**Converted NodeJs**: Converted NodeJs files are saved under `converted` folder
+## Documents list
+- **Presentation**: Presentation (ppt) can be found in `Presentation` folder
+- **Output**: Json output is saved  as `codebase_analysis.json` file
+- **Converted NodeJs**: Converted NodeJs files are saved under `converted` folder
 
 ## Overview
 - **Purpose**: Analyze a Java codebase to extract structure (controllers, services, DAOs, models), summarize modules, and generate Node.js equivalents.
